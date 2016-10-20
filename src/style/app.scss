@@ -1,0 +1,26 @@
+/* styles in src/style directory are applied to the whole page */
+@import './mixins.scss';
+
+body {
+    background: $brand-primary;
+    color: #fff;
+
+    button {
+        @extend .btn;
+        @extend .btn-primary;
+
+        /*@include button-variant(#cece19, #000000, #2dbe27);*/
+        &.btn-random {
+            span {
+                @extend .glyphicon;
+                @extend .glyphicon-star;
+            }
+        }
+        &.btn-change {
+            span {
+                @extend .glyphicon;
+                @extend .glyphicon-fire;
+            }
+        }
+    }
+}

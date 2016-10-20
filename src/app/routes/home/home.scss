@@ -1,0 +1,21 @@
+@import '../../../style/mixins.scss';
+
+section {
+    @include make-row;
+    margin-right: 0;
+
+    article {
+        @include make-xs-column(10);
+        @include make-xs-column-offset(1);
+        @include make-sm-column(8);
+        @include make-sm-column-offset(2);
+
+        h1 {
+            @extend .jumbotron;
+            @include customHeader($gray-dark);
+            text-align: center;
+        }
+
+    }
+
+}

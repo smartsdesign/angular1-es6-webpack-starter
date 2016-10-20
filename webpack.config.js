@@ -6,6 +6,7 @@ var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var path = require('path');
 
 /**
  * Env
@@ -27,10 +28,9 @@ module.exports = function makeWebpackConfig () {
    * Entry
    * Reference: http://webpack.github.io/docs/configuration.html#entry
    * Should be an empty object if it's generating a test build
-   * Karma will set this when it's a test build
    */
   config.entry = isTest ? {} : {
-    app: './src/app/app.js'
+    app: ['bootstrap-loader', './src/app/app.js']
   };
 
   /**
@@ -69,6 +69,14 @@ module.exports = function makeWebpackConfig () {
     config.devtool = 'eval-source-map';
   }
 
+  /** 
+  * ESLINT OPTIONS
+  */
+
+  var eslint = {
+    configFile: '.eslintrc'
+  }
+
   /**
    * Loaders
    * Reference: http://webpack.github.io/docs/configuration.html#module-loaders
@@ -78,7 +86,14 @@ module.exports = function makeWebpackConfig () {
 
   // Initialize module
   config.module = {
-    preLoaders: [],
+    preLoaders: [{
+      // ESLINT LOADER
+      // Reference: https://github.com/MoOx/eslint-loader
+      // lint JS before babel-loader
+      test: /\.js$/,
+      loader: 'eslint',
+      exclude: /node_modules/
+    }],
     loaders: [{
       // JS LOADER
       // Reference: https://github.com/babel/babel-loader
@@ -94,21 +109,23 @@ module.exports = function makeWebpackConfig () {
       //
       // Reference: https://github.com/postcss/postcss-loader
       // Postprocess your css with PostCSS plugins
-      test: /\.css$/,
+      test: /\.(sass|scss)$/,
       // Reference: https://github.com/webpack/extract-text-webpack-plugin
       // Extract css files in production builds
       //
       // Reference: https://github.com/webpack/style-loader
       // Use style-loader in development.
-      loader: isTest ? 'null' : ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!postcss-loader')
+      loader: isTest ? 'null' : ExtractTextPlugin.extract(
+          'style',
+          'css?sourceMap&modules&importLoaders=2&localIdentName=[name]__[local]__[hash:base64:5]' +
+          '!resolve-url' +
+          '!sass?sourceMap' +
+          '!sass-resources')
     }, {
-      // ASSET LOADER
-      // Reference: https://github.com/webpack/file-loader
-      // Copy png, jpg, jpeg, gif, svg, woff, woff2, ttf, eot files to output
-      // Rename the file using the asset hash
-      // Pass along the updated reference to your code
-      // You can add here any file extension you want to get copied to your output
-      test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
+      test: /\.(woff2?|svg)$/, 
+      loader: 'url?limit=10000'
+    }, {
+      test: /\.(ttf|eot)$/, 
       loader: 'file'
     }, {
       // HTML LOADER
@@ -116,23 +133,12 @@ module.exports = function makeWebpackConfig () {
       // Allow loading html through js
       test: /\.html$/,
       loader: 'raw'
+    }, {
+      // Bootstrap jQuery loader
+      test: /bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/,
+      loader: 'imports?jQuery=jquery'
     }]
   };
-
-  // ISPARTA LOADER
-  // Reference: https://github.com/ColCh/isparta-instrumenter-loader
-  // Instrument JS files with Isparta for subsequent code coverage reporting
-  // Skips node_modules and files that end with .test.js
-  if (isTest) {
-    config.module.preLoaders.push({
-      test: /\.js$/,
-      exclude: [
-        /node_modules/,
-        /\.spec\.js$/
-      ],
-      loader: 'isparta-loader'
-    })
-  }
 
   /**
    * PostCSS
@@ -201,6 +207,8 @@ module.exports = function makeWebpackConfig () {
     contentBase: './src/public',
     stats: 'minimal'
   };
+
+  config.sassResources = './config/sass-resources.scss';
 
   return config;
 }();
