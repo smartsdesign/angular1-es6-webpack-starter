@@ -19,6 +19,6 @@
 
     appStyles: './src/style/app.scss',
 
-    bootstrapCustomizations: './sass-config/overrides.scss'
+    bootstrapCustomizations: './src/style/sass-config/overrides.scss'
 
 }

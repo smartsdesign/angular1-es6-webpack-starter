@@ -4,7 +4,7 @@ function greeting() {
     return {
         restrict: 'E',
         scope: {
-            name: '='
+            title: '='
         },
         template: require('../partials/greeting.html')
     }

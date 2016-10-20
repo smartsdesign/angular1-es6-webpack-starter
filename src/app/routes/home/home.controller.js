@@ -1,14 +1,14 @@
 export default class HomeController {
     constructor(randomNames) {
         this.random = randomNames
-        this.name = 'Machiatto project';
+        this.title = 'Machiatto project, 2016';
     }
 
-    changeName() {
-        this.name = 'Team';
+    changeTitle() {
+        this.title = 'Hello, team member';
     }
 
-    getName() {
-        this.name = this.random.getName();
+    getRandomName() {
+        this.title = 'Hello, ' + this.random.getName();
     }
 }
