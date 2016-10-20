@@ -208,7 +208,7 @@ module.exports = function makeWebpackConfig () {
     stats: 'minimal'
   };
 
-  config.sassResources = './config/sass-resources.scss';
+  config.sassResources = './sass-config/sass-resources.scss';
 
   return config;
 }();
